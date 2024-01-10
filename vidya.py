@@ -21,6 +21,7 @@ jumpPower = 100
 jumpDistanceRemaining = 0
 jumping = False
 crashdownSpeed = 1
+#test
 
 # main loop
 pygame.display.flip()
