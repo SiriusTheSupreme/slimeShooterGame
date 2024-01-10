@@ -21,7 +21,8 @@ jumpPower = 100
 jumpDistanceRemaining = 0
 jumping = False
 crashdownSpeed = 1
-#test
+bulletSpeed = 2
+allBullets = []
 
 # main loop
 pygame.display.flip()
@@ -53,7 +54,19 @@ while isRun:
             isRun = False
         # i shoot bullets
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            print("Sus")
+            print("0")
+            distanceX = mouseX - playerX
+            distanceY = mouseY - playerY
+            angleBu = math.atan2(distanceY, distanceX)
+            bulletSpeedX = bulletSpeed * math.cos(angleBu)
+            bulletSpeedY = bulletSpeed * math.sin(angleBu)
+            allBullets.append([playerX, playerY, bulletSpeedX, bulletSpeedY])
+            print("1")
+            
+    
+    for item in allBullets:
+        item[0] += item[2]
+        item[1] += item[3] 
     
     # input grabber
     key = pygame.key.get_pressed()
@@ -83,6 +96,11 @@ while isRun:
     rect = rotimage.get_rect(center=(playerX+50 ,playerY+50))
     screen.blit(rotimage,rect)
     screen.blit(charSprite, (playerX, playerY))
+    
+    for pos_x, pos_y, bulletSpeedX, bulletSpeedY in allBullets:
+        pos_x = int(pos_x)
+        pos_y = int(pos_y)
+        pygame.draw.line(screen, (0,255,0), (pos_x, pos_y), (pos_x, pos_y))
     
     # uptate screen
     pygame.display.flip() 
