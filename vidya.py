@@ -52,7 +52,7 @@ while isRun:
         # quit
         if event.type == pygame.QUIT:
             isRun = False
-        # i shoot bullets
+        # i want to kill myself
         elif event.type == pygame.MOUSEBUTTONDOWN:
             print("0")
             distanceX = mouseX - playerX
@@ -103,6 +103,6 @@ while isRun:
         pygame.draw.line(screen, (0,255,0), (pos_x, pos_y), (pos_x, pos_y))
     
     # uptate screen
-    pygame.display.flip() 
-
+    pygame.display.flip()
+        
 quit()
