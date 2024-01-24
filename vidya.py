@@ -21,18 +21,53 @@ jumpPower = 100
 jumpDistanceRemaining = 0
 jumping = False
 crashdownSpeed = 1
-bulletSpeed = 2
-allBullets = []
+
+# i am going insane wtf is thi- I mean "Bullet Class"
+class projectile(object):
+    def __init__(self,x,y,radius,color):
+        self.x = x
+        self.y = y
+        self.image = pygame.transform.smoothscale(pygame.image.load('bullet.png'), (30,60))
+        self.vel = 3
+        
+        mx, my = pygame.mouse.get_pos()
+        dx, dy = mx - self.x, my - self.y
+        len = math.hypot(dx, dy)
+        self.dx = dx / len
+        self.dy = dy / len
+
+        angle = math.degrees(math.atan2(-dy, dx)) - 90
+        self.image = pygame.transform.rotate(self.image, angle)
+
+    def move(self):
+        self.x += self.dx * self.vel
+        self.y += self.dy * self.vel
+
+    def draw(self,win):
+        win.blit( self.image, (round(self.x), round(self.y)))
+
+# Even more code stolen from StackOverflow :)
+bullets = []
+shoot_loop = 0
 
 # main loop
 pygame.display.flip()
 isRun = True
 while isRun:
-    # mouse locator
+    
+    # ???
+    for bullet in bullets:       
+        if -10 < bullet.x < 1200 and -10 < bullet.y < 800:
+            bullet.move()
+        else:
+            bullets.pop(bullets.index(bullet)) 
+    
+    # mouse locator for gun, I will NOT be fixing this buggy mess
     mouseX, mouseY = pygame.mouse.get_pos()
     rel_x, rel_y = mouseX - playerX, mouseY - playerY
     angle = (180 / math.pi) * -math.atan2(rel_y, rel_x)
     rotimage = pygame.transform.rotate(gunSprite,angle)
+    
     
     # flawless gravity system
     if jumpDistanceRemaining >= 0:
@@ -54,19 +89,9 @@ while isRun:
             isRun = False
         # i want to kill myself
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            print("0")
-            distanceX = mouseX - playerX
-            distanceY = mouseY - playerY
-            angleBu = math.atan2(distanceY, distanceX)
-            bulletSpeedX = bulletSpeed * math.cos(angleBu)
-            bulletSpeedY = bulletSpeed * math.sin(angleBu)
-            allBullets.append([playerX, playerY, bulletSpeedX, bulletSpeedY])
-            print("1")
+            x,y = pygame.mouse.get_pos()
+            print(x,y)
             
-    
-    for item in allBullets:
-        item[0] += item[2]
-        item[1] += item[3] 
     
     # input grabber
     key = pygame.key.get_pressed()
@@ -96,11 +121,6 @@ while isRun:
     rect = rotimage.get_rect(center=(playerX+50 ,playerY+50))
     screen.blit(rotimage,rect)
     screen.blit(charSprite, (playerX, playerY))
-    
-    for pos_x, pos_y, bulletSpeedX, bulletSpeedY in allBullets:
-        pos_x = int(pos_x)
-        pos_y = int(pos_y)
-        pygame.draw.line(screen, (0,255,0), (pos_x, pos_y), (pos_x, pos_y))
     
     # uptate screen
     pygame.display.flip()
