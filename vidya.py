@@ -68,6 +68,7 @@ while isRun:
     angle = (180 / math.pi) * -math.atan2(rel_y, rel_x)
     rotimage = pygame.transform.rotate(gunSprite,angle)
     
+    
     # flawless gravity system
     if jumpDistanceRemaining >= 0:
         playerY = playerY - 2
