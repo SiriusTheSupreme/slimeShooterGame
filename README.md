@@ -7,4 +7,4 @@ Space for jumping
 
 A, D for movement
 
-LMB for shooting
+L/RMB for shooting
