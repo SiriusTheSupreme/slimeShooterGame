@@ -22,6 +22,7 @@ jumpPower = 100
 jumpDistanceRemaining = 0
 jumping = False
 crashdownSpeed = 1
+shooting = False
 
 cursor_pos = list(screen.get_rect().center)
 
@@ -58,7 +59,7 @@ pygame.display.flip()
 isRun = True
 while isRun:
     
-    cursor_rect = cursor.get_rect(center = (cursor_pos))
+    cursor_rect = charSprite.get_rect(center = (cursor_pos))
     
     # ???
     for bullet in bullets:       
@@ -94,8 +95,9 @@ while isRun:
             isRun = False
         # i want to kill myself
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            x,y = pygame.mouse.get_pos()
-            print(x,y)
+            shooting = True
+        elif event.type == pygame.MOUSEBUTTONUP:
+            shooting = False
             
     
     # input grabber
@@ -126,7 +128,7 @@ while isRun:
         shoot_loop = 0
     
     # Even MORE bullet code lol
-    if key[pygame.K_w] and shoot_loop == 0:
+    if shooting and shoot_loop == 0:
         if len(bullets) < 100:
             bullets.append(projectile(round(cursor_rect.x + 25), round(cursor_rect.y ), 6, (255,255,255)))
 
