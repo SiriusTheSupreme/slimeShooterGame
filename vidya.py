@@ -7,6 +7,7 @@ screenWide = 500
 screenHigh = 500
 screen = pygame.display.set_mode([screenWide, screenHigh])
 pygame.display.set_caption("Slimes have guns??") 
+cursor = pygame.image.load('cursor.png').convert_alpha()
 
 # character
 playerX = 200
@@ -22,13 +23,15 @@ jumpDistanceRemaining = 0
 jumping = False
 crashdownSpeed = 1
 
+cursor_pos = list(screen.get_rect().center)
+
 # i am going insane wtf is thi- I mean "Bullet Class"
 class projectile(object):
     def __init__(self,x,y,radius,color):
         self.x = x
         self.y = y
-        self.image = pygame.transform.smoothscale(pygame.image.load('bullet.png'), (30,60))
-        self.vel = 3
+        self.image = pygame.transform.smoothscale(pygame.image.load('bullet.png'), (51, 51))
+        self.vel = 1
         
         mx, my = pygame.mouse.get_pos()
         dx, dy = mx - self.x, my - self.y
@@ -55,9 +58,11 @@ pygame.display.flip()
 isRun = True
 while isRun:
     
+    cursor_rect = cursor.get_rect(center = (cursor_pos))
+    
     # ???
     for bullet in bullets:       
-        if -10 < bullet.x < 1200 and -10 < bullet.y < 800:
+        if -10 < bullet.x < 500 and -10 < bullet.y < 500:
             bullet.move()
         else:
             bullets.pop(bullets.index(bullet)) 
@@ -113,6 +118,19 @@ while isRun:
     if key[pygame.K_s] and playerY < screenHigh - 100:
         playerY = playerY + 2
         jumpDistanceRemaining = 0
+    
+    # uhhhhh
+    if shoot_loop > 0:
+        shoot_loop += 0.03
+    if shoot_loop > 3:
+        shoot_loop = 0
+    
+    # Even MORE bullet code lol
+    if key[pygame.K_w] and shoot_loop == 0:
+        if len(bullets) < 100:
+            bullets.append(projectile(round(cursor_rect.x + 25), round(cursor_rect.y ), 6, (255,255,255)))
+
+        shoot_loop = 1
        
     # screen bg
     screen.fill((255, 255, 255))
@@ -121,6 +139,9 @@ while isRun:
     rect = rotimage.get_rect(center=(playerX+50 ,playerY+50))
     screen.blit(rotimage,rect)
     screen.blit(charSprite, (playerX, playerY))
+
+    for bullet in bullets:
+        bullet.draw(screen)
     
     # uptate screen
     pygame.display.flip()
