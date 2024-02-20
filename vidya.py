@@ -2,16 +2,17 @@
 import pygame, math
 pygame.init()
 
-# prep
+# preparation
 screenWide = 500
 screenHigh = 500
 screen = pygame.display.set_mode([screenWide, screenHigh])
 pygame.display.set_caption("Slimes have guns??") 
-cursor = pygame.image.load('cursor.png').convert_alpha()
+pygame.mouse.set_visible(False)
 
 # character
 playerX = 200
 playerY = 200
+cursorSprite = pygame.image.load('cursor.png')
 charSprite = pygame.image.load('slime.png')
 gunSprite = pygame.image.load('gun.png')
 bulletSprite = pygame.image.load('bullet.png')
@@ -26,8 +27,8 @@ shooting = False
 
 cursor_pos = list(screen.get_rect().center)
 
-# i am going insane wtf is thi- I mean "Bullet Class"
-class projectile(object):
+# bullet class
+class playerBullet(object):
     def __init__(self,x,y,radius,color):
         self.x = x
         self.y = y
@@ -50,7 +51,7 @@ class projectile(object):
     def draw(self,win):
         win.blit( self.image, (round(self.x), round(self.y)))
 
-# Even more code stolen from StackOverflow :)
+# bullet storage
 bullets = []
 shoot_loop = 0
 
@@ -59,11 +60,9 @@ pygame.display.flip()
 isRun = True
 while isRun:
     
-    cursor_rect = charSprite.get_rect(center = (cursor_pos))
-    
-    # ???
+    # kills bullets if they move out of bounds
     for bullet in bullets:       
-        if -10 < bullet.x < 500 and -10 < bullet.y < 500:
+        if -50 < bullet.x < screenWide and -50 < bullet.y < screenWide:
             bullet.move()
         else:
             bullets.pop(bullets.index(bullet)) 
@@ -121,16 +120,17 @@ while isRun:
         playerY = playerY + 2
         jumpDistanceRemaining = 0
     
-    # uhhhhh
+    # shoot speed
     if shoot_loop > 0:
-        shoot_loop += 0.03
+        # increase "0.02" to your liking
+        shoot_loop += 0.02
     if shoot_loop > 3:
         shoot_loop = 0
     
-    # Even MORE bullet code lol
+    # the code that actually shoots the bullets
     if shooting and shoot_loop == 0:
         if len(bullets) < 100:
-            bullets.append(projectile(round(playerX + 20), round(playerY + 20), 6, (255,255,255)))
+            bullets.append(playerBullet(round(playerX + 20), round(playerY + 20), 6, (255,255,255)))
 
         shoot_loop = 1
        
@@ -141,7 +141,9 @@ while isRun:
     rect = rotimage.get_rect(center=(playerX+50 ,playerY+50))
     screen.blit(rotimage,rect)
     screen.blit(charSprite, (playerX, playerY))
+    screen.blit(cursorSprite, (mouseX + 10, mouseY + 10))
 
+    # the code that displays the bullets
     for bullet in bullets:
         bullet.draw(screen)
     
