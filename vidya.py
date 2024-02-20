@@ -130,7 +130,7 @@ while isRun:
     # Even MORE bullet code lol
     if shooting and shoot_loop == 0:
         if len(bullets) < 100:
-            bullets.append(projectile(round(cursor_rect.x + 25), round(cursor_rect.y ), 6, (255,255,255)))
+            bullets.append(projectile(round(playerX + 20), round(playerY + 20), 6, (255,255,255)))
 
         shoot_loop = 1
        
