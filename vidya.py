@@ -1,5 +1,5 @@
 # init lines
-import pygame, math
+import pygame, math, random
 pygame.init()
 
 # preparation
@@ -29,7 +29,7 @@ cursor_pos = list(screen.get_rect().center)
 
 # bullet class
 class playerBullet(object):
-    def __init__(self,x,y,radius,color):
+    def __init__(self,x,y):
         self.x = x
         self.y = y
         self.image = pygame.transform.smoothscale(pygame.image.load('bullet.png'), (51, 51))
@@ -48,12 +48,24 @@ class playerBullet(object):
         self.x += self.dx * self.vel
         self.y += self.dy * self.vel
 
-    def draw(self,win):
-        win.blit( self.image, (round(self.x), round(self.y)))
+    def draw(self,screen):
+        screen.blit( self.image, (round(self.x), round(self.y)))
 
 # bullet storage
 bullets = []
 shoot_loop = 0
+
+class bossUnnamed(object):
+    def __init__(self,x,y,screenWidth):
+        self.x = x
+        self.y = y
+        self.image = pygame.transform.smoothscale(pygame.image.load('man2.png'), (100, 100))
+        
+    def randMovements(self):
+        self.x += randint(-1, 1)
+    
+    def draw(self,screen):
+        screen.blit(self.image, (self.x, self.y))
 
 # main loop
 pygame.display.flip()
@@ -110,7 +122,7 @@ while isRun:
     
     # intricate jump mechanics
     if key[pygame.K_SPACE]:
-        if playerY >= 400:
+        if playerY >= (screenHigh - 100):
             if jump != 0:
                 jump = jump - 1
                 jumping = True
