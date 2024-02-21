@@ -1,5 +1,6 @@
 # init lines
-import pygame, math, random
+import pygame, math
+from random import randint
 pygame.init()
 
 # preparation
@@ -22,7 +23,7 @@ jumpLimit = 1
 jumpPower = 100
 jumpDistanceRemaining = 0
 jumping = False
-crashdownSpeed = 1
+crashdownSpeed = 3
 shooting = False
 
 cursor_pos = list(screen.get_rect().center)
@@ -55,22 +56,45 @@ class playerBullet(object):
 bullets = []
 shoot_loop = 0
 
+# first boss
 class bossUnnamed(object):
     def __init__(self,x,y,screenWidth):
         self.x = x
         self.y = y
+        self.xLimit = screenWidth - 100
         self.image = pygame.transform.smoothscale(pygame.image.load('man2.png'), (100, 100))
         
     def randMovements(self):
-        self.x += randint(-1, 1)
+        if self.x == self.xLimit:
+            self.x -= 4
+        else:
+            self.x += randint(-4, 4)
     
     def draw(self,screen):
         screen.blit(self.image, (self.x, self.y))
 
+
 # main loop
-pygame.display.flip()
+currentBoss = 1
+bossGuy = bossUnnamed(100, 20, screenWide)
 isRun = True
+canSpawnBoss = False
+bossSpawnCooldown = 500
 while isRun:
+    
+    # screen bg
+    screen.fill((255, 255, 255))
+    
+    # checks if a boss can be spawned
+    if canSpawnBoss == True:
+        bossSpawnCooldown -= 1
+    else:
+        bossSpawnCooldown = 500
+    
+    # bosses
+    if currentBoss == 1:
+        bossGuy.randMovements()
+        bossGuy.draw(screen)
     
     # kills bullets if they move out of bounds
     for bullet in bullets:       
@@ -142,18 +166,15 @@ while isRun:
     # the code that actually shoots the bullets
     if shooting and shoot_loop == 0:
         if len(bullets) < 100:
-            bullets.append(playerBullet(round(playerX + 20), round(playerY + 20), 6, (255,255,255)))
+            bullets.append(playerBullet(round(playerX + 20), round(playerY + 20),))
 
         shoot_loop = 1
-       
-    # screen bg
-    screen.fill((255, 255, 255))
     
     # character boi
     rect = rotimage.get_rect(center=(playerX+50 ,playerY+50))
     screen.blit(rotimage,rect)
     screen.blit(charSprite, (playerX, playerY))
-    screen.blit(cursorSprite, (mouseX + 10, mouseY + 10))
+    screen.blit(cursorSprite, (mouseX + 10, mouseY + 10)) 
 
     # the code that displays the bullets
     for bullet in bullets:
