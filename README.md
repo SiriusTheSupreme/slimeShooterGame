@@ -5,6 +5,8 @@ How to play:
 
 Space for jumping
 
+S for jump cancellation
+
 A, D for movement
 
 L/RMB for shooting
