@@ -9,9 +9,10 @@ screenHigh = 500
 screen = pygame.display.set_mode([screenWide, screenHigh])
 pygame.display.set_caption("Slimes have guns??") 
 pygame.mouse.set_visible(False)
+font = pygame.font.Font('freesansbold.ttf', 20)
 
 # character
-invFrames
+invFrames = 0
 playerHP = 10
 playerX = 200
 playerY = 200
@@ -121,7 +122,6 @@ while isRun:
     if canSpawnBoss == True:
         bossSpawnCooldown -= 1
         if bossSpawnCooldown == 0:
-            print("You won!")
             canSpawnBoss = False
     else:
         bossSpawnCooldown = 1000
@@ -143,10 +143,12 @@ while isRun:
         for bomb in bombs:
             bomb.move()
             bomb.draw(screen)
+            if bomb.y > (74 + screenHigh):
+                bombs.pop(bombs.index(bomb))
             # collision detect
             if (bomb.x > playerX and bomb.x < playerX + 100 and bomb.y > playerY and bomb.y < playerY + 100) and invFrames == 0:
                 playerHP -= 1
-                invFrames = 600
+                invFrames = 350
                 bombs.pop(bombs.index(bomb))
             
     
@@ -242,6 +244,13 @@ while isRun:
         currentBoss += 1
         canSpawnBoss = True
     
+    if bossHP > 0:
+        BHPString = font.render((str(bossHP) + " HP"), False, (0, 0, 255), None)
+    else:
+        BHPString = font.render("You won!", False, (0, 0, 255), None)
+    HPString = font.render((str(playerHP) + " HP"), False, (255, 0, 0), None)
+    screen.blit(HPString, (100, 400))
+    screen.blit(BHPString, (400, 100))
     # uptate screen
     pygame.display.flip()
 quit()
