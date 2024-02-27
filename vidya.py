@@ -56,30 +56,55 @@ class playerBullet(object):
 bullets = []
 shoot_loop = 0
 
+bossHP = 100
+
 # first boss
-class bossUnnamed(object):
+class bossDrone(object):
     def __init__(self,x,y,screenWidth):
         self.x = x
         self.y = y
-        self.xLimit = screenWidth - 100
-        self.image = pygame.transform.smoothscale(pygame.image.load('man2.png'), (100, 100))
+        self.direction = 5
+        self.xLimit = screenWidth - 200
+        self.image = pygame.transform.smoothscale(pygame.image.load('drone.png'), (200, 74))
         
-    def randMovements(self):
-        if self.x == self.xLimit:
-            self.x -= 4
-        else:
-            self.x += randint(-4, 4)
+    def randMovements(self, playerX):
+        self.x += self.direction
+        # Move towards the player horizontally
+        if self.x + 20 < playerX:
+            self.direction = 4  # Direction change
+        elif self.x + 20 > playerX:
+            self.direction = -4 # Direction change
+
     
     def draw(self,screen):
         screen.blit(self.image, (self.x, self.y))
+    
+    def attack(self, playerX):
+        # Release bomb when positioned above the player
+        if abs(self.x - playerX) < 40:
+            bombs.append(droneBomb(self.x + 80, self.y + 74))
+            
+class droneBomb(object):
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.image = pygame.transform.smoothscale(pygame.image.load('shell.png'), (50, 166))
+        self.vel = 1
 
+    def move(self):
+        self.y += self.vel
+
+    def draw(self, screen):
+        screen.blit(self.image, (round(self.x), round(self.y)))
 
 # main loop
+bombs = []
+clock = pygame.time.Clock()
 currentBoss = 1
-bossGuy = bossUnnamed(100, 20, screenWide)
+droneBoss = bossDrone(100, 20, screenWide)
 isRun = True
 canSpawnBoss = False
-bossSpawnCooldown = 500
+bossSpawnCooldown = 1000
 while isRun:
     
     # screen bg
@@ -88,13 +113,24 @@ while isRun:
     # checks if a boss can be spawned
     if canSpawnBoss == True:
         bossSpawnCooldown -= 1
+        if bossSpawnCooldown == 0:
+            print("spa")
+            canSpawnBoss = False
     else:
-        bossSpawnCooldown = 500
+        bossSpawnCooldown = 1000
     
     # bosses
     if currentBoss == 1:
-        bossGuy.randMovements()
-        bossGuy.draw(screen)
+        if randint(1,7) == 2:
+            droneBoss.randMovements(playerX)
+        droneBoss.draw(screen)
+        if randint(1,78) == 5:
+            droneBoss.attack(playerX)
+        for bomb in bombs:
+            bomb.move()
+            bomb.draw(screen)
+        
+            
     
     # kills bullets if they move out of bounds
     for bullet in bullets:       
@@ -176,11 +212,18 @@ while isRun:
     screen.blit(charSprite, (playerX, playerY))
     screen.blit(cursorSprite, (mouseX + 10, mouseY + 10)) 
 
-    # the code that displays the bullets
+    # the code that displays the bullets and detects collisions
     for bullet in bullets:
         bullet.draw(screen)
+        if currentBoss == 1:
+            if bullet.x < droneBoss.x + 200 and bullet.x > droneBoss.x and bullet.y < droneBoss.y + 74 and bullet.y > droneBoss.y:
+                bossHP -= 1
+                bullets.pop(bullets.index(bullet)) 
+    
+    if bossHP == 0:
+        currentBoss += 1
+        canSpawnBoss = True
     
     # uptate screen
     pygame.display.flip()
-        
 quit()
