@@ -50,7 +50,7 @@ class playerBullet(object):
         self.y += self.dy * self.vel
 
     def draw(self,screen):
-        screen.blit( self.image, (round(self.x), round(self.y)))
+        screen.blit(self.image, (round(self.x), round(self.y)))
 
 # bullet storage
 bullets = []
@@ -67,19 +67,20 @@ class bossDrone(object):
         self.xLimit = screenWidth - 200
         self.image = pygame.transform.smoothscale(pygame.image.load('drone.png'), (200, 74))
         
-    def randMovements(self, playerX):
+    def movements(self):
         self.x += self.direction
         # Move towards the player horizontally
+        
+    def dirChange(self, playerXpos):
         if self.x + 20 < playerX:
-            self.direction = 4  # Direction change
+            self.direction = 2  # Direction change
         elif self.x + 20 > playerX:
-            self.direction = -4 # Direction change
-
+            self.direction = -2 # Direction change
     
     def draw(self,screen):
         screen.blit(self.image, (self.x, self.y))
     
-    def attack(self, playerX):
+    def attack(self, playerXpos):
         # Release bomb when positioned above the player
         if abs(self.x - playerX) < 40:
             bombs.append(droneBomb(self.x + 80, self.y + 74))
@@ -121,15 +122,21 @@ while isRun:
     
     # bosses
     if currentBoss == 1:
-        if randint(1,7) == 2:
-            droneBoss.randMovements(playerX)
+        droneBoss.movements()
         droneBoss.draw(screen)
-        if randint(1,78) == 5:
-            droneBoss.attack(playerX)
+        if bossHP >= 50:
+            if randint(1,20) == 2:
+                droneBoss.dirChange(playerX)
+            if randint(1,200) == 5:
+                droneBoss.attack(playerX)
+        elif bossHP <= 50:
+            if randint(1,70) == 2:
+                droneBoss.dirChange(playerX)
+            if randint(1,50) == 5:
+                droneBoss.attack(playerX)
         for bomb in bombs:
             bomb.move()
             bomb.draw(screen)
-        
             
     
     # kills bullets if they move out of bounds
