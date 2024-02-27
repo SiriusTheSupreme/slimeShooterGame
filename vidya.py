@@ -11,6 +11,8 @@ pygame.display.set_caption("Slimes have guns??")
 pygame.mouse.set_visible(False)
 
 # character
+invFrames
+playerHP = 10
 playerX = 200
 playerY = 200
 cursorSprite = pygame.image.load('cursor.png')
@@ -110,12 +112,16 @@ while isRun:
     
     # screen bg
     screen.fill((255, 255, 255))
+
+    # removes invulnerability frames
+    if invFrames > 0:
+        invFrames -= 1
     
     # checks if a boss can be spawned
     if canSpawnBoss == True:
         bossSpawnCooldown -= 1
         if bossSpawnCooldown == 0:
-            print("spa")
+            print("You won!")
             canSpawnBoss = False
     else:
         bossSpawnCooldown = 1000
@@ -137,6 +143,11 @@ while isRun:
         for bomb in bombs:
             bomb.move()
             bomb.draw(screen)
+            # collision detect
+            if (bomb.x > playerX and bomb.x < playerX + 100 and bomb.y > playerY and bomb.y < playerY + 100) and invFrames == 0:
+                playerHP -= 1
+                invFrames = 600
+                bombs.pop(bombs.index(bomb))
             
     
     # kills bullets if they move out of bounds
@@ -169,7 +180,7 @@ while isRun:
     # event grabber
     for event in pygame.event.get():
         # quit
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT or playerHP == 0:
             isRun = False
         # i want to kill myself
         elif event.type == pygame.MOUSEBUTTONDOWN:
